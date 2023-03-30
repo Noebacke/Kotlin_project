@@ -8,5 +8,6 @@ data class Weather(
     val longitude: Float,
     val timezone: String,
     @SerializedName("timezone_abbreviation") val timezoneAbbrevation: String,
-    val elevation: Float
+    val elevation: Float,
+    var current_weather: CurrentWeather,
 )

@@ -18,17 +18,69 @@ import retrofit2.HttpException
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var weatherviewModel: WeatherViewModel
+    var latitude =  44.84F
+    var longitude = 0.56F
+
+    private fun searchingButton(){
+        longitude = binding.inputLongitude.text.toString().toFloat()
+        latitude = binding.inputLatitude.text.toString().toFloat()
+        setResultOfSearch()
+    }
+
+//    private fun supressDataOfTextLAtitude(){
+//        binding.inputLatitude.text?.clear()
+//    }
+//
+//    private fun supressDataOfTextLongitude(){
+//        binding.inputLongitude.text?.clear()
+//    }
+
+    private fun setResultOfSearch(){
+        val retrofitBuilder = RetrofitBuilder.apiService
+        CoroutineScope(Dispatchers.IO).launch {
+            val responseWeather = retrofitBuilder.getWeather(latitude,longitude)
+            withContext(Dispatchers.Main) {
+                try {
+                    if (responseWeather.isSuccessful) {
+                        println("CALL API : ${responseWeather.body()}")
+                        binding.returnData.text = ("Longitude : " + responseWeather.body()?.longitude.toString())
+                        binding.returnData2.text = ("Latitude : " + responseWeather.body()?.latitude.toString())
+                        binding.returnData3.text = ("Heure : " + responseWeather.body()?.current_weather?.time.toString())
+                        binding.returnData4.text = ("Température : " + responseWeather.body()?.current_weather?.temperature.toString()
+                        + " °C")
+                        //Faire les modifications d'UI.
+                    } else {
+                        Toast.makeText(baseContext, "Error: ${responseWeather.code()}", Toast.LENGTH_LONG)
+                    }
+                } catch (e: HttpException) {
+                    Toast.makeText(baseContext, "Exception: ${e.message()}", Toast.LENGTH_LONG)
+                } catch (e: Throwable) {
+                    Toast.makeText(baseContext, "Ooops: Something else went wrong", Toast.LENGTH_LONG)
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        var button = binding.eventClick
+        button.setOnClickListener { searchingButton() }
+
+//        var inputLat = binding.inputLatitude
+//        var inputLong = binding.inputLongitude
+//
+//        inputLong.setOnFocusChangeListener { view, b -> supressDataOfTextLongitude() }
+//        inputLat.setOnFocusChangeListener { view, b -> supressDataOfTextLAtitude() }
+
         AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
 
         weatherviewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
-        val text = binding.returnData.id
-        println("TEST : $text")
+        val text = binding.returnData.text
+        val text2 = binding.returnData2.text
+        val text3 = binding.returnData3.text
 
 
 
@@ -44,25 +96,6 @@ class MainActivity : AppCompatActivity() {
         // Retrofit Create instance and Get Request
 
         // Il faut utiliser un ViewModel pour faire le call api
-        val retrofitBuilder = RetrofitBuilder.apiService
-        CoroutineScope(Dispatchers.IO).launch {
-            val responseWeather = retrofitBuilder.getWeather()
-            withContext(Dispatchers.Main) {
-                try {
-                    if (responseWeather.isSuccessful) {
-                        println("CALL API : ${responseWeather.body()}")
-                        binding.returnData.text = responseWeather.body()?.latitude.toString()
-                        //Faire les modifications d'UI.
-                    } else {
-                        Toast.makeText(baseContext, "Error: ${responseWeather.code()}", Toast.LENGTH_LONG)
-                    }
-                } catch (e: HttpException) {
-                    Toast.makeText(baseContext, "Exception: ${e.message()}", Toast.LENGTH_LONG)
-                } catch (e: Throwable) {
-                    Toast.makeText(baseContext, "Ooops: Something else went wrong", Toast.LENGTH_LONG)
-                }
-            }
-        }
     }
 
 
