@@ -1,4 +1,4 @@
-package com.example.weather.view
+package com.example.myapplication.views
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,9 +10,8 @@ import com.example.myapplication.database.CityRoomDatabase
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.entity.WeatherCityEntity
 import com.example.myapplication.repository.WeatherCityRepository
-import com.example.weather.viewModel.WeatherViewModel
-import com.example.weather.retrofit.RetrofitBuilder
-import com.google.android.material.textfield.TextInputEditText
+import com.example.myapplication.retrofit.RetrofitBuilder
+import com.example.myapplication.viewmodels.WeatherViewModel
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 
@@ -28,8 +27,8 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
 
         weatherviewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
-        val text = findViewById<TextInputEditText>(binding.returnData.id)
-        println("TEST : ${text.text}")
+        val text = binding.returnData.id
+        println("TEST : $text")
 
 
 
@@ -52,6 +51,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     if (responseWeather.isSuccessful) {
                         println("CALL API : ${responseWeather.body()}")
+                        binding.returnData.text = responseWeather.body()?.latitude.toString()
                         //Faire les modifications d'UI.
                     } else {
                         Toast.makeText(baseContext, "Error: ${responseWeather.code()}", Toast.LENGTH_LONG)

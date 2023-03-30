@@ -1,6 +1,6 @@
-package com.example.weather.retrofit
+package com.example.myapplication.retrofit
 
-import com.example.weather.service.WeatherService
+import com.example.myapplication.service.WeatherService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
