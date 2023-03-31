@@ -1,5 +1,6 @@
 package com.example.myapplication.views
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.database.CityRoomDatabase
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.entity.WeatherCityEntity
+import com.example.myapplication.model.Weather
 import com.example.myapplication.repository.WeatherCityRepository
 import com.example.myapplication.retrofit.RetrofitBuilder
 import com.example.myapplication.viewmodels.WeatherViewModel
@@ -41,13 +43,20 @@ class MainActivity : AppCompatActivity() {
             val responseWeather = retrofitBuilder.getWeather(latitude,longitude)
             withContext(Dispatchers.Main) {
                 try {
-                    if (responseWeather.isSuccessful) {
-                        println("CALL API : ${responseWeather.body()}")
-                        binding.returnData.text = ("Longitude : " + responseWeather.body()?.longitude.toString())
-                        binding.returnData2.text = ("Latitude : " + responseWeather.body()?.latitude.toString())
-                        binding.returnData3.text = ("Heure : " + responseWeather.body()?.current_weather?.time.toString())
-                        binding.returnData4.text = ("Température : " + responseWeather.body()?.current_weather?.temperature.toString()
+                    if (responseWeather.isSuccessful && null != responseWeather.body()) {
+                        var content = responseWeather.body()
+                        var valueOfFile = content?.current_weather?.weathercode.toString()
+                        val filename = "w_$valueOfFile"
+                        val resID = resources.getIdentifier(filename, "drawable", packageName)
+                        println("CALL API : $content")
+                        binding.img.setImageResource(resID)
+                        binding.returnData.text = ("Longitude : " + content?.longitude.toString())
+                        binding.returnData2.text = ("Latitude : " + content?.latitude.toString())
+                        binding.returnData3.text = ("Heure : " + content?.current_weather?.time.toString())
+                        binding.returnData4.text = ("Température : " + content?.current_weather?.temperature.toString()
                         + " °C")
+                        binding.returnData5.text = ("Vitesse du vent : " + responseWeather.body()?.current_weather?.windspeed.toString() +
+                        " km/h")
                         //Faire les modifications d'UI.
                     } else {
                         Toast.makeText(baseContext, "Error: ${responseWeather.code()}", Toast.LENGTH_LONG)
@@ -59,6 +68,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    @SuppressLint("DiscouragedApi")
+    private fun setCurrentMeteo(time:String,meteo:String) {
+        val value = meteo
+        val filename = "w_$value"
+        val resID = resources.getIdentifier(filename, "drawable", packageName)
+        binding.img.setImageResource(resID)
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
