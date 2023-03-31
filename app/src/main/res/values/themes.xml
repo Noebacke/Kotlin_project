@@ -7,7 +7,7 @@
         <item name="colorOnPrimary">#00BCD4</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">#F44336</item>
-        <item name="colorSecondaryVariant">#9C27B0</item>
+        <item name="colorSecondaryVariant">#FFFFFF</item>
         <item name="colorOnSecondary">#009688</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">#CDDC39</item>
